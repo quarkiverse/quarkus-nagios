@@ -82,7 +82,7 @@ public class UniSoftCache {
         }
 
         public Uni<T> deferred(Supplier<? extends Uni<? extends T>> supplier) {
-            return Uni.createFrom().<T>deferred(supplier::get).plug(this);
+            return Uni.createFrom().<T> deferred(supplier::get).plug(this);
         }
 
         public <U extends T> Uni<T> deferredWork(Function<? super Uni<Void>, ? extends Uni<U>> function) {

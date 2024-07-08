@@ -16,7 +16,7 @@ class SlowCheck1 implements AsyncHealthCheck {
         var response = NagiosCheck.named("My Check")
                 .result(NagiosStatus.OK)
                 .asResponse();
-        return Uni.createFrom().<HealthCheckResponse>item(response)
+        return Uni.createFrom().<HealthCheckResponse> item(response)
                 .onItem().delayIt().by(Duration.ofMillis(10500));
     }
 }
