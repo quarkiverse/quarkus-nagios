@@ -1,0 +1,5 @@
+name: quarkus-nagios
+title: Nagios
+version: dev
+nav:
+  - modules/ROOT/nav.adoc
