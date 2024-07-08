@@ -3,9 +3,8 @@ package io.quarkiverse.nagios.it;
 import io.quarkiverse.nagios.health.*;
 import io.smallrye.health.api.AsyncHealthCheck;
 import io.smallrye.mutiny.Uni;
-import org.eclipse.microprofile.health.*;
-
 import java.time.Duration;
+import org.eclipse.microprofile.health.*;
 
 @Liveness
 class SlowCheck1 implements AsyncHealthCheck {

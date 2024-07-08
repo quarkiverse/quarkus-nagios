@@ -14,14 +14,13 @@ import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.enterprise.context.control.ActivateRequestContext;
 import jakarta.enterprise.inject.*;
 import jakarta.inject.Inject;
-import org.eclipse.microprofile.config.inject.ConfigProperty;
-import org.eclipse.microprofile.health.*;
-
 import java.lang.annotation.Annotation;
 import java.time.Duration;
 import java.util.*;
 import java.util.function.*;
 import java.util.stream.Stream;
+import org.eclipse.microprofile.config.inject.ConfigProperty;
+import org.eclipse.microprofile.health.*;
 
 @ApplicationScoped
 public class NagiosStatusReporter {

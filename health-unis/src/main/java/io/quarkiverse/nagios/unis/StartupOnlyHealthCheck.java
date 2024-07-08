@@ -2,10 +2,9 @@ package io.quarkiverse.nagios.unis;
 
 import io.quarkiverse.nagios.health.NagiosCheckResponse;
 import io.smallrye.mutiny.Uni;
-import org.eclipse.microprofile.health.HealthCheckResponse;
-
 import java.time.OffsetDateTime;
 import java.util.function.Supplier;
+import org.eclipse.microprofile.health.HealthCheckResponse;
 
 public class StartupOnlyHealthCheck {
 

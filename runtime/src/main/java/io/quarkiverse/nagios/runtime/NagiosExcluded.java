@@ -1,7 +1,6 @@
 package io.quarkiverse.nagios.runtime;
 
 import jakarta.inject.Qualifier;
-
 import java.lang.annotation.*;
 
 import static java.lang.annotation.ElementType.TYPE;

@@ -3,7 +3,6 @@ package io.quarkiverse.nagios.unis;
 import io.quarkiverse.nagios.health.*;
 import io.smallrye.mutiny.Uni;
 import io.smallrye.mutiny.infrastructure.Infrastructure;
-
 import java.util.function.Supplier;
 
 public class DurationHealthCheck {
