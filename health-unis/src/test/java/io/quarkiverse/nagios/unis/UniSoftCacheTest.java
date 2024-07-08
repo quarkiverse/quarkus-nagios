@@ -1,12 +1,14 @@
 package io.quarkiverse.nagios.unis;
 
-import io.smallrye.mutiny.Uni;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 import java.time.Duration;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicReference;
+
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import io.smallrye.mutiny.Uni;
 
 class UniSoftCacheTest {
 

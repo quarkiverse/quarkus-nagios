@@ -1,13 +1,15 @@
 package io.quarkiverse.nagios.unis;
 
-import io.quarkiverse.nagios.health.*;
-import io.smallrye.mutiny.Uni;
-import java.time.*;
-import java.util.concurrent.atomic.*;
-import org.junit.jupiter.api.*;
-
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
+
+import java.time.*;
+import java.util.concurrent.atomic.*;
+
+import org.junit.jupiter.api.*;
+
+import io.quarkiverse.nagios.health.*;
+import io.smallrye.mutiny.Uni;
 
 class DelayedFailHealthCheckTest {
 

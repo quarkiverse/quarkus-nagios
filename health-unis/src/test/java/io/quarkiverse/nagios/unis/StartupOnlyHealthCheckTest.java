@@ -1,13 +1,15 @@
 package io.quarkiverse.nagios.unis;
 
-import io.quarkiverse.nagios.health.*;
-import io.smallrye.mutiny.Uni;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.is;
+
 import java.util.concurrent.atomic.AtomicReference;
+
 import org.eclipse.microprofile.health.HealthCheckResponse;
 import org.junit.jupiter.api.Test;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.is;
+import io.quarkiverse.nagios.health.*;
+import io.smallrye.mutiny.Uni;
 
 class StartupOnlyHealthCheckTest {
 

@@ -1,5 +1,19 @@
 package io.quarkiverse.nagios.runtime;
 
+import java.lang.annotation.Annotation;
+import java.time.Duration;
+import java.util.*;
+import java.util.function.*;
+import java.util.stream.Stream;
+
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.enterprise.context.control.ActivateRequestContext;
+import jakarta.enterprise.inject.*;
+import jakarta.inject.Inject;
+
+import org.eclipse.microprofile.config.inject.ConfigProperty;
+import org.eclipse.microprofile.health.*;
+
 import io.quarkiverse.nagios.health.*;
 import io.quarkus.arc.*;
 import io.quarkus.security.identity.CurrentIdentityAssociation;
@@ -10,17 +24,6 @@ import io.smallrye.health.registry.*;
 import io.smallrye.mutiny.Uni;
 import io.vertx.ext.auth.User;
 import io.vertx.ext.web.RoutingContext;
-import jakarta.enterprise.context.ApplicationScoped;
-import jakarta.enterprise.context.control.ActivateRequestContext;
-import jakarta.enterprise.inject.*;
-import jakarta.inject.Inject;
-import java.lang.annotation.Annotation;
-import java.time.Duration;
-import java.util.*;
-import java.util.function.*;
-import java.util.stream.Stream;
-import org.eclipse.microprofile.config.inject.ConfigProperty;
-import org.eclipse.microprofile.health.*;
 
 @ApplicationScoped
 public class NagiosStatusReporter {

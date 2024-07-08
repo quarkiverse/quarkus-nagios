@@ -1,11 +1,13 @@
 package io.quarkiverse.nagios.unis;
 
-import io.quarkiverse.nagios.health.*;
-import io.smallrye.mutiny.Uni;
 import java.time.*;
 import java.util.*;
 import java.util.function.*;
+
 import org.eclipse.microprofile.health.HealthCheckResponse;
+
+import io.quarkiverse.nagios.health.*;
+import io.smallrye.mutiny.Uni;
 
 public class DelayedFailHealthCheck {
 

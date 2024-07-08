@@ -1,11 +1,12 @@
 package io.quarkiverse.nagios.unis;
 
-import io.quarkiverse.nagios.health.*;
-import io.smallrye.mutiny.Uni;
-import io.smallrye.mutiny.infrastructure.Infrastructure;
 import java.time.Duration;
 import java.util.concurrent.atomic.*;
 import java.util.function.*;
+
+import io.quarkiverse.nagios.health.*;
+import io.smallrye.mutiny.Uni;
+import io.smallrye.mutiny.infrastructure.Infrastructure;
 
 public class UniSoftCache {
 

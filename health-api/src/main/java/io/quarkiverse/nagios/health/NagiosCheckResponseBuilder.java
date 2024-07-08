@@ -1,6 +1,7 @@
 package io.quarkiverse.nagios.health;
 
 import java.util.*;
+
 import org.eclipse.microprofile.health.*;
 
 public class NagiosCheckResponseBuilder extends HealthCheckResponseBuilder {

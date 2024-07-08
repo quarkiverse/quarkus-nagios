@@ -1,9 +1,10 @@
 package io.quarkiverse.nagios.it;
 
+import org.eclipse.microprofile.health.HealthCheckResponse;
+
 import io.quarkiverse.nagios.health.*;
 import io.smallrye.health.api.*;
 import io.smallrye.mutiny.Uni;
-import org.eclipse.microprofile.health.HealthCheckResponse;
 
 @Wellness
 class MyHealthCheck implements AsyncHealthCheck {

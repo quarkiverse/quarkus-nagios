@@ -1,9 +1,9 @@
 package io.quarkiverse.nagios.runtime;
 
+import static io.quarkiverse.nagios.runtime.NagiosStatusReporter.*;
+
 import io.smallrye.health.api.HealthType;
 import io.vertx.ext.web.RoutingContext;
-
-import static io.quarkiverse.nagios.runtime.NagiosStatusReporter.*;
 
 public class NagiosStatusTypeHandler extends NagiosStatusGroupHandler {
 
