@@ -1,25 +1,35 @@
 package io.quarkiverse.nagios.deployment;
 
 import io.quarkus.runtime.annotations.*;
+import io.smallrye.config.*;
 
-@ConfigRoot(name = "nagios")
-public class NagiosConfig {
+@ConfigMapping(prefix = "quarkus.nagios")
+@ConfigRoot(phase = ConfigPhase.BUILD_TIME)
+public interface NagiosConfig {
 
     /**
      * Root path
      */
-    @ConfigItem(defaultValue = "nagios")
-    String rootPath;
+    @WithDefault("nagios")
+    String rootPath();
 
     /**
      * Default group
      */
-    @ConfigItem(defaultValue = "/well/or/group/")
-    String defaultGroup;
+    @WithDefault("/well/or/group/")
+    String defaultGroup();
 
     /**
-     * Management enabled
+     * Management configuration
      */
-    @ConfigItem(name = "management.enabled", defaultValue = "true")
-    boolean managementEnabled;
+    Management management();
+
+    interface Management {
+
+        /**
+         * Management enabled
+         */
+        @WithDefault("true")
+        boolean enabled();
+    }
 }

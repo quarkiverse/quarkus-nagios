@@ -32,7 +32,7 @@ class NagiosProcessor {
             BuildProducer<RouteBuildItem> routeProducer) {
         routeProducer.produce(nonApplicationRootPathBuildItem.routeBuilder()
                 .management(QUARKUS_NAGIOS_MANAGEMENT_ENABLED)
-                .route(config.rootPath)
+                .route(config.rootPath())
                 .routeConfigKey("quarkus.nagios.root-path")
                 .handler(new NagiosStatusRootHandler())
                 .displayOnNotFoundPage()
@@ -40,14 +40,14 @@ class NagiosProcessor {
                 .build());
         routeProducer.produce(nonApplicationRootPathBuildItem.routeBuilder()
                 .management(QUARKUS_NAGIOS_MANAGEMENT_ENABLED)
-                .nestedRoute(config.rootPath, "*")
+                .nestedRoute(config.rootPath(), "*")
                 .handler(new NagiosStatusTypeHandler())
                 .displayOnNotFoundPage()
                 .blockingRoute()
                 .build());
         routeProducer.produce(nonApplicationRootPathBuildItem.routeBuilder()
                 .management(QUARKUS_NAGIOS_MANAGEMENT_ENABLED)
-                .nestedRoute(config.rootPath, "group/*")
+                .nestedRoute(config.rootPath(), "group/*")
                 .handler(new NagiosStatusGroupHandler())
                 .displayOnNotFoundPage()
                 .blockingRoute()
