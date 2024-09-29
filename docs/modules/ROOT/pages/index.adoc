@@ -2,7 +2,7 @@
 
 include::./includes/attributes.adoc[]
 
-TIP: Describe what the extension does here.
+This extension provides health checks in the Nagios format, simplifying the integration of Quarkus applications with Nagios.
 
 == Installation
 
@@ -19,9 +19,72 @@ For instance, with Maven, add the following dependency to your POM file:
 </dependency>
 ----
 
+== Usage
+
+=== Nagios Setup
+
+Use this shell script to set up an active service check in nagios:
+
+----
+#!/bin/bash
+
+url=$1
+
+if [ -z "$url" ]; then
+    echo "usage: $0 URL"
+    exit
+fi
+
+declare -A statusmap=(
+  ["OK"]="0"
+  ["WARN"]="1"
+  ["WARNING"]="1"
+  ["CRIT"]="2"
+  ["CRITICAL"]="2"
+  ["UNKNOWN"]="3"
+)
+
+result=$(curl --fail --max-time 15 --connect-timeout 7 $url 2>/dev/null)
+
+status=${result%%:*}
+
+exitcode=3
+if [ -z "$result" ]; then
+    result="UNKNOWN: Got no result from $url"
+elif [ -z "${statusmap[$status]}" ]; then
+    exitcode=${statusmap[$status]}
+fi
+
+echo "$result"
+exit $exitcode
+----
+
+=== Nagios Health Checks
+
+The Quarkus Nagios extensions works with all health checks. However, this extension provides an implementation of the Health Check API that allows to use additional nagios-specific features, such as performance graphs and additional status values.
+
+----
+@Wellness
+@Singleton
+public class QueueSizeHealth implements HealthCheck {
+
+    @Override
+    public NagiosCheckResponse call() {
+        int queueSize = ...
+        return QUEUE_SIZE.result(queueSize).asResponse();
+    }
+
+    private static final NagiosCheck QUEUE_SIZE = NagiosCheck.named("queue size")
+            .performance()           // export as performance data
+            .warningIf().above(30)   // warning range
+            .criticalIf().above(100) // critical range
+            .build();
+}
+----
+
+
 [[extension-configuration-reference]]
 == Extension Configuration Reference
 
-TIP: Remove this section if you don't have Quarkus configuration properties in your extension.
 
 include::includes/quarkus-nagios.adoc[leveloffset=+1, opts=optional]
