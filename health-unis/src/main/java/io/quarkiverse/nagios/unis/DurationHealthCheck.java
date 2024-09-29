@@ -30,6 +30,9 @@ public class DurationHealthCheck {
     }
 
     public static Uni<NagiosCheckResult> of(NagiosCheck check, Supplier<Uni<Long>> duration) {
-        return Uni.createFrom().deferred(duration::get).map(check::result);
+        return Uni.createFrom().voidItem()
+                .emitOn(Infrastructure.getDefaultWorkerPool())
+                .flatMap(n -> duration.get())
+                .map(check::result);
     }
 }

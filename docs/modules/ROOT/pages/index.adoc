@@ -2,7 +2,20 @@
 
 include::./includes/attributes.adoc[]
 
-This extension provides health checks in the Nagios format, simplifying the integration of Quarkus applications with Nagios.
+Nagios (https://www.nagios.org/) is a monitoring and alerting tool.
+
+Nagios allows to add custom health checks via shell scripts. A simple way to monitor the uptime of a quarkus application is to curl the (SmallRye) health endpoints.
+
+However, if you want to use more features of Nagios, such as specific error messages, performance graphs, and alert levels, you need to implement a custom script for each aspect you want to check. Scripts need to output their data in a specific format for Nagios to pick it up. Such a setup creates friction between Devs and Operation every time checks need to be modified.
+
+This extension adds endpoints that report all Microprofile health checks in the Nagios format, so that in the Nagios server a small re-usable script around curl is enough to configure all checks.
+
+Furthermore, this extension provides a custom implementation of the Microprofile HealthCheckResponse API, that allows to use more Nagios features:
+
+* 4 alert levels (ok, warning, unknown, critical)
+* export numerical results as performance data (allows Nagios to graph historic data)
+* re-usable check definitions with Nagios alert ranges
+
 
 == Installation
 
@@ -44,19 +57,20 @@ declare -A statusmap=(
   ["UNKNOWN"]="3"
 )
 
-result=$(curl --fail --max-time 15 --connect-timeout 7 $url 2>/dev/null)
+result=$(curl --proto-default https --fail --max-time 15 --connect-timeout 7 $url 2>/dev/null)
+
+if [ -z "$result" ]; then
+    result="WARN: Got no result from $url"
+fi
 
 status=${result%%:*}
 
-exitcode=3
-if [ -z "$result" ]; then
-    result="UNKNOWN: Got no result from $url"
-elif [ -z "${statusmap[$status]}" ]; then
-    exitcode=${statusmap[$status]}
+if [ -z "${stati[$status]}" ]; then
+    status="WARNING"
 fi
 
 echo "$result"
-exit $exitcode
+exit ${statusmap[$status]}
 ----
 
 === Nagios Health Checks
@@ -82,6 +96,65 @@ public class QueueSizeHealth implements HealthCheck {
 }
 ----
 
+=== Asynchronous Health Check Helpers
+
+The extensions provides additional helper classes to simplify building responsive asynchronous health checks.
+
+==== DelayedFailHealthCheck
+
+The `DelayedFailHealthCheck` will hide a failing health check for a configurable amount of time. This is useful for health checks that are expected to fail for a short period of time, e.g. during a deployment, and will often repair themselves.
+
+Example: a critical result will be reported as OK for one more minute, and as WARNING for 5 minutes.
+
+----
+Uni<NagiosCheckResponse> actual = ...;
+
+return actual.plug(DelayedFailHealthCheck.of(Duration.ofMinutes(1), Duration.ofMinutes(5)));
+// or
+return DelayedFailHealthCheck.of(actual, Duration.ofMinutes(1), Duration.ofMinutes(5)))
+----
+
+==== DurationHealthCheck
+
+Measures the duration a supplier or uni needs to complete and reports the result as a check result in milliseconds. To reduce load on the underlying system, it should be combined with a UniSoftCache.
+
+Example:
+----
+var check = NagiosCheck.named("queue size")
+    .performance()             // export as performance data
+    .warningIf().above(5000)   // warning if > 5 seconds
+    .criticalIf().above(10000) // critical if > 10 seconds
+    .build();
+
+return DurationHealthCheck.measure(check, () -> ...);
+----
+
+==== StartupOnlyHealthCheck
+
+A health check that will always return OK, after it has returned OK once. This is useful if an application has multiple start-up checks, where each is expected to pass once the application is initialized.
+
+==== UniSoftCache
+
+A soft cache that will re-evaluate the supplier after a configurable amount of time. This is useful to avoid overloading the underlying system with health checks.
+
+If the underlying check does not complete within a given timeout, it will return the last known result to ensure that the health check remains responsive.
+
+Examples:
+----
+Uni<MyValue> actual = ...;
+return actual.plug(UniSoftCache.build().waitFor(5).cacheFor(60).initially(myDefault));
+----
+
+----
+return UniSoftCache.build()
+    .cacheFor(Duration.ofMinutes(5))
+    .deferredValue(myDefault, () -> ...);
+----
+
+----
+Uni<NagiosCheckResult> actual = ...;
+return actual.plug(UniSoftCache.build().initiallyTimeout("My Check"));
+----
 
 [[extension-configuration-reference]]
 == Extension Configuration Reference
