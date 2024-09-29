@@ -38,6 +38,7 @@ For instance, with Maven, add the following dependency to your POM file:
 
 Use this shell script to set up an active service check in nagios:
 
+[source,bash]
 ----
 #!/bin/bash
 
@@ -65,7 +66,7 @@ fi
 
 status=${result%%:*}
 
-if [ -z "${stati[$status]}" ]; then
+if [ -z "${statusmap[$status]}" ]; then
     status="WARNING"
 fi
 
@@ -77,6 +78,7 @@ exit ${statusmap[$status]}
 
 The Quarkus Nagios extensions works with all health checks. However, this extension provides an implementation of the Health Check API that allows to use additional nagios-specific features, such as performance graphs and additional status values.
 
+[source,java]
 ----
 @Wellness
 @Singleton
@@ -106,6 +108,7 @@ The `DelayedFailHealthCheck` will hide a failing health check for a configurable
 
 Example: a critical result will be reported as OK for one more minute, and as WARNING for 5 minutes.
 
+[source,java]
 ----
 Uni<NagiosCheckResponse> actual = ...;
 
@@ -119,6 +122,7 @@ return DelayedFailHealthCheck.of(actual, Duration.ofMinutes(1), Duration.ofMinut
 Measures the duration a supplier or uni needs to complete and reports the result as a check result in milliseconds. To reduce load on the underlying system, it should be combined with a UniSoftCache.
 
 Example:
+[source,java]
 ----
 var check = NagiosCheck.named("queue size")
     .performance()             // export as performance data
@@ -131,26 +135,29 @@ return DurationHealthCheck.measure(check, () -> ...);
 
 ==== StartupOnlyHealthCheck
 
-A health check that will always return OK, after it has returned OK once. This is useful if an application has multiple start-up checks, where each is expected to pass once the application is initialized.
+A health check that will always return OK, after it has returned OK once. Reduces load if an application has multiple start-up checks, where each is expected to pass once the application is initialized.
 
 ==== UniSoftCache
 
-A soft cache that will re-evaluate the supplier after a configurable amount of time. This is useful to avoid overloading the underlying system with health checks.
+A soft cache that will re-evaluate the supplier after a configurable amount of time, to avoid overloading the underlying system with health checks.
 
 If the underlying check does not complete within a given timeout, it will return the last known result to ensure that the health check remains responsive.
 
 Examples:
+[source,java]
 ----
 Uni<MyValue> actual = ...;
 return actual.plug(UniSoftCache.build().waitFor(5).cacheFor(60).initially(myDefault));
 ----
 
+[source,java]
 ----
 return UniSoftCache.build()
     .cacheFor(Duration.ofMinutes(5))
     .deferredValue(myDefault, () -> ...);
 ----
 
+[source,java]
 ----
 Uni<NagiosCheckResult> actual = ...;
 return actual.plug(UniSoftCache.build().initiallyTimeout("My Check"));
