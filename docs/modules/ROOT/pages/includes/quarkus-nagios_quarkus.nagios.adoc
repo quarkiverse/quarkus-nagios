@@ -1,0 +1,65 @@
+:summaryTableId: quarkus-nagios_quarkus-nagios
+[.configuration-legend]
+icon:lock[title=Fixed at build time] Configuration property fixed at build time - All other configuration properties are overridable at runtime
+[.configuration-reference.searchable, cols="80,.^10,.^10"]
+|===
+
+h|[.header-title]##Configuration property##
+h|Type
+h|Default
+
+a|icon:lock[title=Fixed at build time] [[quarkus-nagios_quarkus-nagios-root-path]] [.property-path]##link:#quarkus-nagios_quarkus-nagios-root-path[`quarkus.nagios.root-path`]##
+
+[.description]
+--
+Root path
+
+
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_NAGIOS_ROOT_PATH+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
+Environment variable: `+++QUARKUS_NAGIOS_ROOT_PATH+++`
+endif::add-copy-button-to-env-var[]
+--
+|string
+|`nagios`
+
+a|icon:lock[title=Fixed at build time] [[quarkus-nagios_quarkus-nagios-default-group]] [.property-path]##link:#quarkus-nagios_quarkus-nagios-default-group[`quarkus.nagios.default-group`]##
+
+[.description]
+--
+Default group
+
+
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_NAGIOS_DEFAULT_GROUP+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
+Environment variable: `+++QUARKUS_NAGIOS_DEFAULT_GROUP+++`
+endif::add-copy-button-to-env-var[]
+--
+|string
+|`/well/or/group/`
+
+a|icon:lock[title=Fixed at build time] [[quarkus-nagios_quarkus-nagios-management-enabled]] [.property-path]##link:#quarkus-nagios_quarkus-nagios-management-enabled[`quarkus.nagios.management.enabled`]##
+
+[.description]
+--
+Management enabled
+
+
+ifdef::add-copy-button-to-env-var[]
+Environment variable: env_var_with_copy_button:+++QUARKUS_NAGIOS_MANAGEMENT_ENABLED+++[]
+endif::add-copy-button-to-env-var[]
+ifndef::add-copy-button-to-env-var[]
+Environment variable: `+++QUARKUS_NAGIOS_MANAGEMENT_ENABLED+++`
+endif::add-copy-button-to-env-var[]
+--
+|boolean
+|`true`
+
+|===
+
+
+:!summaryTableId:
