@@ -3,8 +3,7 @@ description: Adds endpoint reporting health checks in Nagios format
 metadata:
   keywords:
     - nagios
-# To create and publish this guide, see https://github.com/quarkiverse/quarkiverse/wiki#documenting-your-extension
-# guide: https://quarkiverse.github.io/quarkiverse-docs/nagios/dev/ 
+  guide: https://docs.quarkiverse.io/quarkus-nagios/dev/
   categories:
     - "miscellaneous"
   status: "preview"
