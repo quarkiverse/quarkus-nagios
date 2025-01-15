@@ -1,26 +1,20 @@
 package io.quarkiverse.nagios.unis;
 
 import java.time.Duration;
-import java.util.concurrent.atomic.*;
 import java.util.function.*;
 
 import io.quarkiverse.nagios.health.*;
 import io.smallrye.mutiny.Uni;
 import io.smallrye.mutiny.infrastructure.Infrastructure;
 
-public class UniSoftCache {
+public class UniSoftCache<T> {
 
     public static <T> Uni<T> cached(Uni<T> uni, Duration refresh, Duration wait, T initial) {
         return cached(uni, toMillis(refresh), wait, initial);
     }
 
     public static <T> Uni<T> cached(Uni<T> uni, ToLongFunction<? super T> refresh, Duration wait, T initial) {
-        var cache = new AtomicReference<>(initial);
-        var until = new AtomicLong();
-        return uni.invoke(cache::set)
-                .onItem().invoke(t -> until.set(System.currentTimeMillis() + refresh.applyAsLong(t)))
-                .memoize().until(() -> System.currentTimeMillis() > until.get())
-                .ifNoItem().after(wait).recoverWithItem(cache::get);
+        return new UniSoftCache<>(uni, refresh, wait, initial).asUni();
     }
 
     public static Uni<NagiosCheckResult> cached(Uni<NagiosCheckResult> uni, Duration refresh, Duration wait) {
@@ -40,8 +34,71 @@ public class UniSoftCache {
         return t -> millis;
     }
 
+    private final Uni<T> actual;
+    private final Uni<T> deferred;
+    private final ToLongFunction<? super T> refresh;
+    private Uni<T> cache;
+    private Uni<T> next = null;
+    private long until = 0;
+
+    public UniSoftCache(Uni<T> actual, ToLongFunction<? super T> refresh, Duration wait, T initial) {
+        this.refresh = refresh;
+        this.cache = Uni.createFrom().item(initial);
+        this.actual = actual.invoke(this::onItem)
+                .onFailure().invoke(this::onFailure);
+        this.deferred = Uni.createFrom().deferred(this::get)
+                .ifNoItem().after(wait).recoverWithUni(() -> cache);
+    }
+
+    public Uni<T> asUni() {
+        return deferred;
+    }
+
+    private Uni<T> get() {
+        var n = next;
+        if (n != null) {
+            return n;
+        }
+        if (useCache()) {
+            return cache;
+        }
+        return refresh();
+    }
+
+    private boolean useCache() {
+        return System.currentTimeMillis() < until;
+    }
+
+    private synchronized Uni<T> refresh() {
+        if (next == null) {
+            var future = actual.subscribeAsCompletionStage();
+            next = Uni.createFrom().emitter(emitter ->
+                future.whenComplete((item, error) -> {
+                    if (error != null) {
+                        emitter.fail(error);
+                    } else {
+                        emitter.complete(item);
+                    }
+                })
+            );
+        }
+        return next;
+    }
+
+    private void onItem(T item) {
+        cache = Uni.createFrom().item(item);
+        until = System.currentTimeMillis() + refresh.applyAsLong(item);
+        synchronized (this) {
+            next = null;
+        }
+    }
+
+    private synchronized void onFailure() {
+        next = null;
+    }
+
     public record Builder<T>(ToLongFunction<? super T> refresh, Duration waiting,
-            T initial) implements Function<Uni<T>, Uni<T>> {
+                             T initial) implements Function<Uni<T>, Uni<T>> {
 
         private static final Builder<Void> DEFAULT = new Builder<>(toMillis(Duration.ofSeconds(60)), Duration.ofSeconds(5),
                 null);
@@ -72,8 +129,7 @@ public class UniSoftCache {
         }
 
         public Builder<NagiosCheckResult> initiallyTimeout(String label) {
-            var timeout = NagiosCheck.named(label).result("timeout", NagiosStatus.UNKNOWN);
-            return initially(timeout);
+            return initially(NagiosCheck.named(label).result("timeout", NagiosStatus.UNKNOWN));
         }
 
         @Override
@@ -82,7 +138,7 @@ public class UniSoftCache {
         }
 
         public Uni<T> deferred(Supplier<? extends Uni<? extends T>> supplier) {
-            return Uni.createFrom().<T> deferred(supplier::get).plug(this);
+            return Uni.createFrom().<T>deferred(supplier::get).plug(this);
         }
 
         public <U extends T> Uni<T> deferredWork(Function<? super Uni<Void>, ? extends Uni<U>> function) {
