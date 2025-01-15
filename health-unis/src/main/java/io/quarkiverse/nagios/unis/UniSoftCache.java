@@ -71,15 +71,13 @@ public class UniSoftCache<T> {
     private synchronized Uni<T> refresh() {
         if (next == null) {
             var future = actual.subscribeAsCompletionStage();
-            next = Uni.createFrom().emitter(emitter ->
-                future.whenComplete((item, error) -> {
-                    if (error != null) {
-                        emitter.fail(error);
-                    } else {
-                        emitter.complete(item);
-                    }
-                })
-            );
+            next = Uni.createFrom().emitter(emitter -> future.whenComplete((item, error) -> {
+                if (error != null) {
+                    emitter.fail(error);
+                } else {
+                    emitter.complete(item);
+                }
+            }));
         }
         return next;
     }
@@ -95,7 +93,7 @@ public class UniSoftCache<T> {
     }
 
     public record Builder<T>(ToLongFunction<? super T> refresh, Duration waiting,
-                             T initial) implements Function<Uni<T>, Uni<T>> {
+            T initial) implements Function<Uni<T>, Uni<T>> {
 
         private static final Builder<Void> DEFAULT = new Builder<>(toMillis(Duration.ofSeconds(60)), Duration.ofSeconds(5),
                 null);
@@ -135,7 +133,7 @@ public class UniSoftCache<T> {
         }
 
         public Uni<T> deferred(Supplier<? extends Uni<? extends T>> supplier) {
-            return Uni.createFrom().<T>deferred(supplier::get).plug(this);
+            return Uni.createFrom().<T> deferred(supplier::get).plug(this);
         }
 
         public <U extends T> Uni<T> deferredWork(Function<? super Uni<Void>, ? extends Uni<U>> function) {
