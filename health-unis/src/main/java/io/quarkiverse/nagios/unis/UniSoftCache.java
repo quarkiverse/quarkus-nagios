@@ -44,8 +44,7 @@ public class UniSoftCache<T> {
     public UniSoftCache(Uni<T> actual, ToLongFunction<? super T> refresh, Duration wait, T initial) {
         this.refresh = refresh;
         this.cache = Uni.createFrom().item(initial);
-        this.actual = actual.invoke(this::onItem)
-                .onFailure().invoke(this::onFailure);
+        this.actual = actual.onItemOrFailure().invoke(this::onCompletion);
         this.deferred = Uni.createFrom().deferred(this::get)
                 .ifNoItem().after(wait).recoverWithUni(() -> cache);
     }
@@ -85,16 +84,14 @@ public class UniSoftCache<T> {
         return next;
     }
 
-    private void onItem(T item) {
-        cache = Uni.createFrom().item(item);
-        until = System.currentTimeMillis() + refresh.applyAsLong(item);
+    private void onCompletion(T item, Throwable failure) {
+        if (failure == null) {
+            cache = Uni.createFrom().item(item);
+            until = System.currentTimeMillis() + refresh.applyAsLong(item);
+        }
         synchronized (this) {
             next = null;
         }
-    }
-
-    private synchronized void onFailure() {
-        next = null;
     }
 
     public record Builder<T>(ToLongFunction<? super T> refresh, Duration waiting,
