@@ -21,6 +21,12 @@ public record NagiosLongResult(
     }
 
     @Override
+    public NagiosLongResult withData(Map<String, Object> data) {
+        data = Map.copyOf(data);
+        return new NagiosLongResult(name, value, unit, status, warningRange, criticalRange, data, exportPerformance);
+    }
+
+    @Override
     public String getName() {
         return name;
     }

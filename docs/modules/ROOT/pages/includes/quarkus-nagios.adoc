@@ -7,7 +7,11 @@ h|[.header-title]##Configuration property##
 h|Type
 h|Default
 
-a|icon:lock[title=Fixed at build time] [[quarkus-nagios_quarkus-nagios-root-path]] [.property-path]##link:#quarkus-nagios_quarkus-nagios-root-path[`quarkus.nagios.root-path`]##
+a|icon:lock[title=Fixed at build time] [[quarkus-nagios_quarkus-nagios-root-path]] [.property-path]##link:#quarkus-nagios_quarkus-nagios-root-path[`+++quarkus.nagios.root-path+++`]##
+ifdef::add-copy-button-to-config-props[]
+config_property_copy_button:+++quarkus.nagios.root-path+++[]
+endif::add-copy-button-to-config-props[]
+
 
 [.description]
 --
@@ -22,9 +26,13 @@ Environment variable: `+++QUARKUS_NAGIOS_ROOT_PATH+++`
 endif::add-copy-button-to-env-var[]
 --
 |string
-|`nagios`
+|`+++nagios+++`
 
-a|icon:lock[title=Fixed at build time] [[quarkus-nagios_quarkus-nagios-default-group]] [.property-path]##link:#quarkus-nagios_quarkus-nagios-default-group[`quarkus.nagios.default-group`]##
+a|icon:lock[title=Fixed at build time] [[quarkus-nagios_quarkus-nagios-default-group]] [.property-path]##link:#quarkus-nagios_quarkus-nagios-default-group[`+++quarkus.nagios.default-group+++`]##
+ifdef::add-copy-button-to-config-props[]
+config_property_copy_button:+++quarkus.nagios.default-group+++[]
+endif::add-copy-button-to-config-props[]
+
 
 [.description]
 --
@@ -39,9 +47,13 @@ Environment variable: `+++QUARKUS_NAGIOS_DEFAULT_GROUP+++`
 endif::add-copy-button-to-env-var[]
 --
 |string
-|`/well/or/group/`
+|`+++/well/or/group/+++`
 
-a|icon:lock[title=Fixed at build time] [[quarkus-nagios_quarkus-nagios-management-enabled]] [.property-path]##link:#quarkus-nagios_quarkus-nagios-management-enabled[`quarkus.nagios.management.enabled`]##
+a|icon:lock[title=Fixed at build time] [[quarkus-nagios_quarkus-nagios-management-enabled]] [.property-path]##link:#quarkus-nagios_quarkus-nagios-management-enabled[`+++quarkus.nagios.management.enabled+++`]##
+ifdef::add-copy-button-to-config-props[]
+config_property_copy_button:+++quarkus.nagios.management.enabled+++[]
+endif::add-copy-button-to-config-props[]
+
 
 [.description]
 --
@@ -56,7 +68,7 @@ Environment variable: `+++QUARKUS_NAGIOS_MANAGEMENT_ENABLED+++`
 endif::add-copy-button-to-env-var[]
 --
 |boolean
-|`true`
+|`+++true+++`
 
 |===
 

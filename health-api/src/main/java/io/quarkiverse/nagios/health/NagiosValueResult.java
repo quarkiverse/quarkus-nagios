@@ -15,6 +15,12 @@ public record NagiosValueResult(
     }
 
     @Override
+    public NagiosValueResult withData(Map<String, Object> data) {
+        data = Map.copyOf(data);
+        return new NagiosValueResult(name, value, status, data);
+    }
+
+    @Override
     public String getName() {
         return name;
     }
